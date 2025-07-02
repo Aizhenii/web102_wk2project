@@ -26,13 +26,14 @@ const flowerCards = [
 const App = () => {
   const [index, updateIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+  const [feedback, setFeedback] = useState("")
 
   const nextCard = () => {
-    let randomIndex;
-    do {
-      randomIndex = Math.floor(Math.random() * flowerCards.length);
-    } while (randomIndex === index && flowerCards.length > 1); // avoid same card if possible
-    updateIndex(randomIndex);
+    if (index + 1 < flowerCards.length) {
+      updateIndex(index + 1);
+      setFlipped(false);
+    }
   }
   
   const prevCard = () => {
@@ -41,7 +42,18 @@ const App = () => {
       setFlipped(false);
     }
   }
-  
+
+  const submitGuess = () => {
+    if (inputValue.trim().toLowerCase == flowerCards[index].answer.toLowerCase) {
+      setFeedback("You're right! Good job!!")
+    }
+    else {
+      setFeedback("Aww, that's wrong :(")
+    }
+
+    setInputValue("")
+  }
+
   return (
     <div>
       <h2 class="card-title">Flower Cards</h2>
@@ -55,9 +67,22 @@ const App = () => {
           setFlipped={setFlipped}
         />
       </div>
+
+      <div>
+        <h4>Guess the answer here:</h4>
+        <input
+          type="text"
+          placeholder="Place your answer here..."
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+        />
+        <button onClick={submitGuess}>Submit Guess</button>
+        <p>{feedback}</p>
+
+      </div>
       
-      <button onClick={prevCard}>Previous Card</button>
-      <button onClick={nextCard}>Next Card</button>
+      <button onClick={prevCard} disabled={index === 0}>Previous Card</button>
+      <button onClick={nextCard} disabled={index === flowerCards.length - 1}>Next Card</button>
 
     </div>
   )
